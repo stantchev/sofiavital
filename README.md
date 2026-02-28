@@ -1,31 +1,122 @@
-# SofiaVital
+<div align="center">
 
-> **Къде е най-добре да живея в София?**
+# 🟢 SofiaVital
 
-Интерактивна карта на качеството на живот в 24-те официални района на Столична община. Данни в реално време от [Софияплан](https://sofiaplan.bg) API.
+### Къде е най-добре да живея в София?
 
----
+**Интерактивна карта на качеството на живот в 24-те района на Столична община**
 
-## Бърз старт
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?style=flat-square&logo=leaflet&logoColor=white)](https://leafletjs.com/)
+[![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 
-```bash
-npm install
-npm run dev
-```
-
-Отвори [http://localhost:3000](http://localhost:3000)
+</div>
 
 ---
 
-## Стек
+## Какво е SofiaVital?
+
+SofiaVital превръща стотици набора от градски данни в един прост въпрос: **"Кой квартал в София е най-добър за мен?"**
+
+Картата зарежда реални GeoJSON граници и слоеве данни директно от [Софияплан](https://sofiaplan.bg) — официалния изследователски орган на Столична община — и ги комбинира в персонализиран **Vital Score**, различен за всеки профил на потребителя.
+
+Изберете профил → Картата се оцветява моментално → Кликнете на район → Картата плавно приближава и показва детайлен анализ.
+
+---
+
+## Функционалности
 
 | | |
 |---|---|
-| **Framework** | Next.js 15 (App Router) |
-| **Карта** | Leaflet.js + CartoDB Dark tiles (без API key) |
-| **Данни** | SofiaPlan API → `/api/sofiaplan/[...path]` proxy |
-| **Анимации** | Anime.js 3 |
-| **Типове** | TypeScript |
+| 🗺 **Интерактивна карта** | OpenStreetMap (CartoDB Dark) + реални GeoJSON полигони на 24-те района |
+| 🎨 **Персонализирано оцветяване** | Vital Score се изчислява в реално време спрямо избрания профил |
+| 👤 **Профили** | Семейство, Млад специалист, Пенсионер или напълно персонализирани тегла |
+| 📊 **7 слоя данни** | Въздух, зеленина, метро, трамваи, топлинни острови, училища, застрояване |
+| 🔍 **Zoom & Fly** | Плавно приближаване към избрания район от картата или от класацията |
+| 🏆 **Класация** | 24-те района наредени по Vital Score за текущия профил |
+| ⚙️ **Custom тегла** | Слайдери за всеки показател с реално-временно обновяване |
+| 🌐 **Без API ключ** | Работи само с безплатни OSM тайлове — fork & run |
+
+---
+
+## Данни
+
+Всички данни са от **[api.sofiaplan.bg](https://api.sofiaplan.bg)** — отвореният API на ОП „Софияплан". Заявките минават през вграден Next.js proxy (`/api/sofiaplan/[...path]`), за да избегнат CORS ограниченията.
+
+| Слой | Dataset ID | Описание |
+|---|---|---|
+| Граници на районите | `350` | GeoJSON полигони — основа на картата |
+| Паркове и градини | `235` | Зелени площи |
+| Метро линии 1 и 2 | `32` | Релсова мрежа |
+| Трамвайна мрежа | `254` | Градски транспорт |
+| Въздух — ФПЧ10 | `579` | Концентрация на прах 2018 г. |
+| Топлинни острови | `45` | ГТО интензивност (август 2019) |
+| Училища | `281` | Имоти на образователни обекти |
+| Застрояване | `628` | Разрешения за строеж след 2010 г. |
+
+---
+
+## Vital Score
+
+Агрегиран показател от 0 до 100, изчислен динамично:
+
+```
+Vital Score = Σ ( стойност_на_показател × тегло_на_профила )
+```
+
+| Оценка | Описание |
+|---|---|
+| 75–100 | 🟢 Отлично |
+| 65–74 | 🟩 Добро |
+| 55–64 | 🟡 Средно |
+| 45–54 | 🟠 Под средното |
+| 0–44 | 🔴 Слабо |
+
+**Тегла по профил:**
+
+| Показател | 👨‍👩‍👧 Семейство | 💼 Млад специалист | 🌿 Пенсионер |
+|---|---|---|---|
+| Зеленина | 25% | 15% | 22% |
+| Образование | 28% | 5% | 3% |
+| Тишина | 20% | 15% | 28% |
+| Въздух | 15% | 15% | 25% |
+| Транспорт | 5% | 30% | 5% |
+| Прохлада | 4% | 10% | 15% |
+| Застрояване | 3% | 10% | 2% |
+
+---
+
+## Технологии
+
+| | |
+|---|---|
+| **Next.js 15** | React framework с App Router |
+| **TypeScript 5** | Type safety навсякъде |
+| **Leaflet 1.9** | Интерактивна карта + `flyTo` анимации |
+| **CartoDB Dark** | Тъмна базова карта без API ключ |
+| **Anime.js 3** | Hero анимации, animated counters и score bars |
+| **SofiaPlan API** | 100+ набора реални данни за София |
+
+---
+
+## Инсталация
+
+```bash
+# 1. Клонирай
+git clone https://github.com/YOUR_USERNAME/sofiavital.git
+cd sofiavital
+
+# 2. Инсталирай зависимостите
+npm install
+
+# 3. Стартирай
+npm run dev
+```
+
+Отвори [http://localhost:3000](http://localhost:3000).
+
+> **Без `.env` файл.** Без API ключове. Всички данни са публично достъпни.
 
 ---
 
@@ -34,70 +125,61 @@ npm run dev
 ```
 sofiavital/
 ├── app/
-│   ├── page.tsx                        # Главна страница
-│   ├── layout.tsx                      # Root layout
-│   ├── globals.css                     # Design tokens + base styles
-│   └── api/sofiaplan/[...path]/route.ts  # CORS proxy → api.sofiaplan.bg
+│   ├── page.tsx                           # Главна страница
+│   ├── layout.tsx                         # Root layout + metadata
+│   ├── globals.css                        # Design tokens, анимации, Leaflet overrides
+│   └── api/sofiaplan/[...path]/route.ts   # Proxy → api.sofiaplan.bg (CORS fix)
 │
 ├── components/
-│   ├── HeroScreen.tsx     # Анимиран hero с Anime.js
-│   ├── MapView.tsx        # Leaflet карта + GeoJSON слоеве
-│   ├── DistrictPanel.tsx  # Sidebar с детайли за район
-│   ├── TopBar.tsx         # Навигация + профили
-│   ├── LayerPanel.tsx     # Селектор на слоеве
-│   ├── RankingPanel.tsx   # Класация на 24-те района
-│   ├── CustomWeightsBar.tsx # Персонализирани тегла
-│   └── Legend.tsx         # Цветова легенда
+│   ├── HeroScreen.tsx        # Входен екран с Anime.js stagger анимация
+│   ├── MapView.tsx           # Leaflet карта + GeoJSON полигони + flyTo
+│   ├── DistrictPanel.tsx     # Sidebar с детайли и animated score bars
+│   ├── TopBar.tsx            # Навигация + profile switcher
+│   ├── LayerPanel.tsx        # Превключване на 7-те слоя данни
+│   ├── RankingPanel.tsx      # Класация на 24-те района
+│   ├── CustomWeightsBar.tsx  # Слайдери за персонализирани тегла
+│   └── Legend.tsx            # Цветова легенда
 │
 └── lib/
-    └── data.ts            # Всички данни, типове, helpers
+    └── data.ts               # Типове, данни, helpers, профили, слоеве
 ```
 
 ---
 
-## SofiaPlan API слоеве
+## Roadmap
 
-| Слой | Dataset ID | Описание |
-|---|---|---|
-| Райони (граници) | 350 | GeoJSON полигони на 24-те района |
-| Паркове | 235 | Паркове и градини |
-| Метро | 32 | Метро линии 1 и 2 |
-| Трамваи | 254 | Трамвайна мрежа |
-| Въздух (PM10) | 579 | Замърсяване с ФПЧ10 |
-| Топлинни острови | 45 | ГТО интензивност |
-| Училища | 281 | Имоти на училища |
-| Застрояване | 628 | Разрешения за строеж |
-
-Всички заявки минават през `/api/sofiaplan/datasets/:id` proxy за избягване на CORS. Кешът е 1 час.
+- [ ] AI асистент — чат с Anthropic API за въпроси за конкретни райони
+- [ ] Сравнение — side-by-side на 2–3 района
+- [ ] Шумови карти — реална интеграция на данни за шум от Софияплан
+- [ ] Имотни цени — dataset `#624` (наеми и покупки по ГЕ)
+- [ ] Share — споделяне на резултата с персонализиран линк
+- [ ] Mobile — адаптивен дизайн за телефон
 
 ---
 
-## Vital Score
+## Принос
 
-Изчислява се динамично на база профила на потребителя:
+Pull requests са добре дошли. За по-голями промени, моля отворете issue първо.
 
-```
-score = Σ (indicator_value × profile_weight)
+```bash
+git checkout -b feature/my-idea
+git commit -m 'feat: describe your change'
+git push origin feature/my-idea
+# → отворете Pull Request
 ```
 
-| Профил | Приоритет |
-|---|---|
-| 👨‍👩‍👧 Семейство | Зеленина 25%, Образование 28%, Тишина 20% |
-| 💼 Млад специалист | Транспорт 30%, Въздух 15%, Зеленина 15% |
-| 🌿 Пенсионер | Тишина 28%, Въздух 25%, Зеленина 22% |
-| ⚙️ По избор | Слайдери за всеки показател |
+---
+
+## Лиценз
+
+[MIT](LICENSE)
 
 ---
 
-## Следващи стъпки
+<div align="center">
 
-- [ ] AI чат асистент (Anthropic API)
-- [ ] Сравнение на 2–3 района
-- [ ] Реални данни за шум от SofiaPlan
-- [ ] Филтър по наемни цени (dataset #624)
-- [ ] Share/export на резултати
-- [ ] Mobile responsive layout
+Данни: [Софияплан](https://sofiaplan.bg) &nbsp;·&nbsp; Карти: [OpenStreetMap](https://openstreetmap.org) / [CARTO](https://carto.com)
 
----
+**Направен с ❤️ за София**
 
-© 2026 — данни от Софияплан, карти от OpenStreetMap / CARTO
+</div>
