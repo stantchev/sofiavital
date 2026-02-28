@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+/* ─── TOKENS ─────────────────────────────────────────────────── */
+:root {
+  /* Background scale */
+  --bg-base:    #03070f;
+  --bg-surface: #070d1a;
+  --bg-raised:  #0c1524;
+  --bg-overlay: #111d30;
+  --bg-hover:   #162035;
+
+  /* Border */
+  --border-subtle:  #0f1e32;
+  --border-default: #1a2d47;
+  --border-strong:  #243d5e;
+
+  /* Text */
+  --text-primary:   #e8f0fe;
+  --text-secondary: #7a9ab8;
+  --text-muted:     #3d5470;
+  --text-faint:     #1f3350;
+
+  /* Accent: emerald */
+  --accent:        #34d399;
+  --accent-dim:    #065f46;
+  --accent-glow:   rgba(52, 211, 153, 0.15);
+
+  /* Score palette */
+  --score-excellent: #34d399;
+  --score-good:      #6ee7b7;
+  --score-medium:    #fcd34d;
+  --score-below:     #fb923c;
+  --score-poor:      #f87171;
+
+  /* Fonts */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
+  /* Spacing */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-full: 999px;
+}
+
+/* ─── RESET ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 2px; }
+
+/* ─── LEAFLET OVERRIDES ──────────────────────────────────────── */
+.leaflet-container { background: var(--bg-base) !important; }
+.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.leaflet-popup-content-wrapper {
+  background: var(--bg-raised) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+.leaflet-popup-tip { background: var(--bg-raised) !important; }
+.leaflet-control-zoom a {
+  background: var(--bg-raised) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+.leaflet-control-zoom a:hover { background: var(--bg-overlay) !important; color: var(--text-primary) !important; }
+.leaflet-control-attribution { display: none; }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.4); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ─── UTILITY ────────────────────────────────────────────────── */
+.fade-up   { animation: fadeUp 0.4s ease both; }
+.fade-in   { animation: fadeIn 0.3s ease both; }
+.slide-in-right { animation: slideInRight 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+
+.animate-delay-1 { animation-delay: 0.05s; }
+.animate-delay-2 { animation-delay: 0.10s; }
+.animate-delay-3 { animation-delay: 0.15s; }
+.animate-delay-4 { animation-delay: 0.20s; }
+
+/* Noise texture overlay */
+.noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  border-radius: inherit;
+}
