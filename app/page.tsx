@@ -13,6 +13,7 @@ const LayerPanel       = dynamic(() => import("@/components/LayerPanel"),       
 const RankingPanel     = dynamic(() => import("@/components/RankingPanel"),      { ssr: false });
 const CustomWeightsBar = dynamic(() => import("@/components/CustomWeightsBar"),  { ssr: false });
 const Legend           = dynamic(() => import("@/components/Legend"),            { ssr: false });
+const ChatWidget       = dynamic(() => import("@/components/ChatWidget"),        { ssr: false });
 
 // ── Mobile phone detection ────────────────────────────────────────────────────
 // Targets phones only. Tablets (≥768 px) and desktops pass through normally.
@@ -24,14 +25,13 @@ function useIsMobilePhone(): boolean {
       const ua = navigator.userAgent;
 
       const isPhoneUA =
-        (/Android/i.test(ua) && /Mobile/i.test(ua)) // Android phone (tablets omit "Mobile")
+        (/Android/i.test(ua) && /Mobile/i.test(ua))
         || /iPhone|iPod/i.test(ua)
         || /Windows Phone/i.test(ua)
         || /BlackBerry|BB10/i.test(ua)
         || /Opera Mini/i.test(ua);
 
       const isNarrow = window.innerWidth < 768;
-
       setIsMobile(isPhoneUA && isNarrow);
     };
 
@@ -48,115 +48,92 @@ function MobileWall() {
   return (
     <div
       style={{
-        position: "fixed",
-        inset: 0,
-        background:
-          "radial-gradient(ellipse 80% 60% at 50% 30%, #091c38 0%, #03070f 70%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        position:       "fixed",
+        inset:          0,
+        background:     "radial-gradient(ellipse 80% 60% at 50% 30%, #091c38 0%, #03070f 70%)",
+        display:        "flex",
+        flexDirection:  "column",
+        alignItems:     "center",
         justifyContent: "center",
-        padding: "32px 28px",
-        textAlign: "center",
-        fontFamily: "'DM Sans', sans-serif",
-        zIndex: 99999,
+        padding:        "32px 28px",
+        textAlign:      "center",
+        fontFamily:     "'DM Sans', sans-serif",
+        zIndex:         99999,
       }}
     >
       {/* Subtle grid */}
       <div
         style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage:
-            "linear-gradient(#0f1e3218 1px, transparent 1px), linear-gradient(90deg, #0f1e3218 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-          maskImage:
-            "radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 80%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 80%)",
-          pointerEvents: "none",
+          position:        "absolute",
+          inset:           0,
+          backgroundImage: "linear-gradient(#0f1e3218 1px, transparent 1px), linear-gradient(90deg, #0f1e3218 1px, transparent 1px)",
+          backgroundSize:  "40px 40px",
+          maskImage:       "radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 50% 50%, black 0%, transparent 80%)",
+          pointerEvents:   "none",
         }}
       />
 
       <div style={{ position: "relative", maxWidth: 320 }}>
-        {/* Icon */}
         <div
           style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            background: "rgba(52,211,153,0.08)",
-            border: "1px solid rgba(52,211,153,0.2)",
-            display: "flex",
-            alignItems: "center",
+            width:          64,
+            height:         64,
+            borderRadius:   "50%",
+            background:     "rgba(52,211,153,0.08)",
+            border:         "1px solid rgba(52,211,153,0.2)",
+            display:        "flex",
+            alignItems:     "center",
             justifyContent: "center",
-            fontSize: 28,
-            margin: "0 auto 28px",
+            fontSize:       28,
+            margin:         "0 auto 28px",
           }}
         >
           🖥️
         </div>
 
-        {/* Badge */}
         <div
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 7,
-            background: "rgba(6,95,70,0.35)",
-            border: "1px solid rgba(52,211,153,0.2)",
+            display:      "inline-flex",
+            alignItems:   "center",
+            gap:          7,
+            background:   "rgba(6,95,70,0.35)",
+            border:       "1px solid rgba(52,211,153,0.2)",
             borderRadius: 999,
-            padding: "4px 12px",
+            padding:      "4px 12px",
             marginBottom: 20,
           }}
         >
           <span
             style={{
-              width: 6,
-              height: 6,
+              width:        6,
+              height:       6,
               borderRadius: "50%",
-              background: "#34d399",
-              display: "inline-block",
-              animation: "pulse-dot 1.8s ease-in-out infinite",
+              background:   "#34d399",
+              display:      "inline-block",
+              animation:    "pulse-dot 1.8s ease-in-out infinite",
             }}
           />
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 600,
-              color: "#6ee7b7",
-              letterSpacing: 1,
-              textTransform: "uppercase",
-            }}
-          >
+          <span style={{ fontSize: 10, fontWeight: 600, color: "#6ee7b7", letterSpacing: 1, textTransform: "uppercase" }}>
             В разработка
           </span>
         </div>
 
-        {/* Heading */}
         <h1
           style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: 22,
-            fontWeight: 800,
-            color: "#e8f0fe",
+            fontFamily:    "'Syne', sans-serif",
+            fontSize:      22,
+            fontWeight:    800,
+            color:         "#e8f0fe",
             letterSpacing: "-0.02em",
-            lineHeight: 1.2,
-            margin: "0 0 14px",
+            lineHeight:    1.2,
+            margin:        "0 0 14px",
           }}
         >
           SofiaVital
         </h1>
 
-        {/* Message */}
-        <p
-          style={{
-            fontSize: 15,
-            color: "#7a9ab8",
-            lineHeight: 1.65,
-            margin: "0 0 28px",
-          }}
-        >
+        <p style={{ fontSize: 15, color: "#7a9ab8", lineHeight: 1.65, margin: "0 0 28px" }}>
           Мобилната версия е в разработка.
           <br />
           Моля, използвайте{" "}
@@ -166,26 +143,16 @@ function MobileWall() {
           .
         </p>
 
-        {/* Divider */}
         <div
           style={{
-            width: 40,
-            height: 1,
-            background:
-              "linear-gradient(90deg, transparent, #1a2d47, transparent)",
-            margin: "0 auto 24px",
+            width:      40,
+            height:     1,
+            background: "linear-gradient(90deg, transparent, #1a2d47, transparent)",
+            margin:     "0 auto 24px",
           }}
         />
 
-        {/* Device icons */}
-        <div
-          style={{
-            display: "flex",
-            gap: 20,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div style={{ display: "flex", gap: 20, justifyContent: "center" }}>
           {[
             { icon: "💻", label: "Лаптоп" },
             { icon: "🖥️", label: "Компютър" },
@@ -193,9 +160,7 @@ function MobileWall() {
           ].map(({ icon, label }) => (
             <div key={label} style={{ textAlign: "center" }}>
               <div style={{ fontSize: 22, marginBottom: 5 }}>{icon}</div>
-              <div style={{ fontSize: 10, color: "#3d5470", letterSpacing: 0.5 }}>
-                {label}
-              </div>
+              <div style={{ fontSize: 10, color: "#3d5470", letterSpacing: 0.5 }}>{label}</div>
             </div>
           ))}
         </div>
@@ -226,7 +191,6 @@ export default function Home() {
     setActiveLayer((prev) => (prev === id ? null : id));
   }, []);
 
-  // Mobile phones see the wall — tablets and desktops continue normally
   if (isMobilePhone) return <MobileWall />;
 
   if (showHero) {
@@ -238,12 +202,12 @@ export default function Home() {
   return (
     <div
       style={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        background: "var(--bg-base)",
-        overflow: "hidden",
+        width:          "100vw",
+        height:         "100vh",
+        display:        "flex",
+        flexDirection:  "column",
+        background:     "var(--bg-base)",
+        overflow:       "hidden",
       }}
     >
       <TopBar
@@ -269,18 +233,18 @@ export default function Home() {
         {!sidebarOpen && (
           <div
             style={{
-              position: "absolute",
-              top: 12,
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "var(--bg-raised)",
-              border: "1px solid var(--border-subtle)",
+              position:     "absolute",
+              top:          12,
+              left:         "50%",
+              transform:    "translateX(-50%)",
+              background:   "var(--bg-raised)",
+              border:       "1px solid var(--border-subtle)",
               borderRadius: "var(--radius-full)",
-              padding: "6px 16px",
-              fontSize: 11,
-              color: "var(--text-muted)",
+              padding:      "6px 16px",
+              fontSize:     11,
+              color:        "var(--text-muted)",
               pointerEvents: "none",
-              zIndex: 600,
+              zIndex:       600,
               letterSpacing: 0.3,
             }}
           >
@@ -288,10 +252,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* Legend */}
         <Legend />
 
-        {/* Ranking panel */}
         {showRanking && (
           <RankingPanel
             districts={DISTRICTS}
@@ -302,7 +264,6 @@ export default function Home() {
           />
         )}
 
-        {/* Layer panel */}
         {showLayers && (
           <LayerPanel
             activeId={activeLayer}
@@ -311,12 +272,10 @@ export default function Home() {
           />
         )}
 
-        {/* Custom weights */}
         {profile === "custom" && (
           <CustomWeightsBar weights={customW} onChange={handleCustomWeight} />
         )}
 
-        {/* District sidebar */}
         {selectedDistrict && (
           <DistrictPanel
             district={selectedDistrict}
@@ -325,6 +284,9 @@ export default function Home() {
           />
         )}
       </div>
+
+      {/* AI Chat — floats above everything */}
+      <ChatWidget />
     </div>
   );
 }

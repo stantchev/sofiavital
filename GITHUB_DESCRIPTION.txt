@@ -1,0 +1,16 @@
+# GitHub — About (описание на проекта)
+
+Копирай това в полето "About" при настройките на репозиторито:
+
+---
+
+Интерактивна карта за качеството на живот в 24-те района на София —
+въздух, зеленина, шум, транспорт и образование от реални данни на Софияплан.
+
+---
+
+# Topics (тагове)
+
+Добави тези тагове към репозиторито (Settings → Topics):
+
+sofia  bulgaria  nextjs  typescript  leaflet  openstreetmap  open-data  urban-data  gis  sofiaplan  interactive-map  quality-of-life  react  animejs

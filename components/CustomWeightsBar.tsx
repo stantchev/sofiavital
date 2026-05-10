@@ -9,6 +9,7 @@ interface Props {
 
 export default function CustomWeightsBar({ weights, onChange }: Props) {
   const total = Object.values(weights).reduce((s, v) => s + v, 0);
+  const keys = Object.keys(INDICATOR_LABELS) as IndicatorKey[];
 
   return (
     <div
@@ -23,7 +24,7 @@ export default function CustomWeightsBar({ weights, onChange }: Props) {
         borderRadius: "var(--radius-lg)",
         padding: "16px 20px",
         zIndex: 700,
-        width: 620,
+        width: "min(780px, calc(100vw - 340px))",
         backdropFilter: "blur(12px)",
         boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
       }}
@@ -37,12 +38,14 @@ export default function CustomWeightsBar({ weights, onChange }: Props) {
         </span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 12 }}>
-        {(Object.entries(INDICATOR_LABELS) as [IndicatorKey, string][]).map(([key, label]) => {
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "10px 16px" }}>
+        {keys.map((key) => {
           const pct = Math.round(weights[key] * 100);
           return (
             <div key={key} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 5 }}>{label}</div>
+              <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {INDICATOR_LABELS[key]}
+              </div>
               <input
                 type="range"
                 min={0}
@@ -51,7 +54,7 @@ export default function CustomWeightsBar({ weights, onChange }: Props) {
                 onChange={(e) => onChange(key, parseInt(e.target.value) / 100)}
                 style={{ width: "100%", accentColor: "#34d399", cursor: "pointer" }}
               />
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#34d399", fontFamily: "var(--font-display)", marginTop: 3 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#34d399", fontFamily: "var(--font-display)", marginTop: 2 }}>
                 {pct}%
               </div>
             </div>

@@ -40,7 +40,7 @@ const DISTRICT_CENTROIDS: Record<string, [number, number]> = {
 };
 
 const HOME_CENTER: [number, number] = [42.693, 23.330];
-const HOME_ZOOM = 10;
+const HOME_ZOOM = 11;
 const DISTRICT_ZOOM = 13;
 
 export default function MapView({
