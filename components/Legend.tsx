@@ -1,28 +1,25 @@
 "use client";
 
-export default function Legend() {
+interface Props {
+  drilledDistrict?: string | null;
+}
+
+export default function Legend({ drilledDistrict }: Props) {
   const items = [
-    ["75–100", "#34d399", "Отлично"],
-    ["65–74",  "#6ee7b7", "Добро"],
-    ["55–64",  "#fcd34d", "Средно"],
-    ["45–54",  "#fb923c", "Под средното"],
-    ["0–44",   "#f87171", "Слабо"],
+    ["75-100", "#34d399", "Отлично"],
+    ["65-74",  "#86efac", "Добро"],
+    ["55-64",  "#fbbf24", "Средно"],
+    ["45-54",  "#fb923c", "Под средното"],
+    ["0-44",   "#f87171", "Слабо"],
   ];
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: 20,
-        left: 16,
-        background: "var(--bg-surface)",
-        border: "1px solid var(--border-subtle)",
-        borderRadius: "var(--radius-md)",
-        padding: "10px 14px",
-        zIndex: 600,
-        backdropFilter: "blur(8px)",
-      }}
-    >
+    <div style={{
+      position: "absolute", bottom: 20, left: 16,
+      background: "var(--bg-surface)", border: "1px solid var(--border-subtle)",
+      borderRadius: "var(--radius-md)", padding: "10px 14px",
+      zIndex: 600, backdropFilter: "blur(8px)",
+    }}>
       <div style={{ fontSize: 9, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontFamily: "var(--font-display)" }}>
         Vital Score
       </div>
@@ -33,6 +30,22 @@ export default function Legend() {
           <span style={{ fontSize: 10, color: "var(--text-faint)" }}>{label}</span>
         </div>
       ))}
+
+      {/* Kvartal indicator */}
+      {drilledDistrict && (
+        <div style={{
+          marginTop: 10, paddingTop: 8,
+          borderTop: "1px solid var(--border-subtle)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: "#a78bfa", flexShrink: 0, border: "1px dashed #a78bfa" }} />
+            <span style={{ fontSize: 10, color: "#a78bfa" }}>Квартали</span>
+          </div>
+          <div style={{ fontSize: 9, color: "var(--text-muted)", marginTop: 3 }}>
+            Клик на карта за изход
+          </div>
+        </div>
+      )}
     </div>
   );
 }

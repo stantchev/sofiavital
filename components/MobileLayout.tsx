@@ -528,7 +528,7 @@ export default function MobileLayout() {
 
   const handleLayerToggle = useCallback((id: string) => {
     setActiveLayer((prev) => (prev === id ? null : id));
-    setActiveTab("map");
+    // No tab switch needed — MapView stays mounted and picks up activeLayer change
   }, []);
 
   const handleSelectDistrict = useCallback((d: District) => {
@@ -574,35 +574,38 @@ export default function MobileLayout() {
       {/* Content area */}
       <div style={{ flex: 1, position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
 
-        {/* Map */}
-        {activeTab === "map" && (
-          <div style={{ position: "absolute", inset: 0 }}>
-            <MapView weights={weights} activeLayerId={activeLayer} selectedId={selectedDistrict?.id ?? null} onSelectDistrict={handleSelectDistrict} districts={DISTRICTS} />
-            {!selectedDistrict && (
-              <div style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", background: "var(--bg-raised)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-full)", padding: "5px 14px", fontSize: 11, color: "var(--text-muted)", pointerEvents: "none", zIndex: 10, whiteSpace: "nowrap" }}>
-                Докосни район за детайли
-              </div>
-            )}
-            {/* Legend */}
-            <div style={{ position: "absolute", bottom: 70, left: 12, background: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", padding: "8px 12px", zIndex: 10 }}>
-              <div style={{ fontSize: 8, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, fontFamily: "var(--font-display)" }}>Score</div>
-              {[["#4ade80","75+"],["#86efac","65+"],["#fbbf24","55+"],["#f97316","45+"],["#f87171","<45"]].map(([c,l]) => (
-                <div key={l} style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 2, background: c, flexShrink: 0 }} />
-                  <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{l}</span>
-                </div>
-              ))}
+        {/*
+          MapView stays ALWAYS mounted — never unmount/remount on tab change.
+          Visibility is controlled via display:block/none so Leaflet keeps its
+          internal state (layers, zoom, markers) intact across tab switches.
+        */}
+        <div style={{ position: "absolute", inset: 0, display: activeTab === "map" ? "block" : "none", zIndex: 1 }}>
+          <MapView weights={weights} activeLayerId={activeLayer} selectedId={selectedDistrict?.id ?? null} onSelectDistrict={handleSelectDistrict} districts={DISTRICTS} />
+          {!selectedDistrict && activeTab === "map" && (
+            <div style={{ position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)", background: "var(--bg-raised)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-full)", padding: "5px 14px", fontSize: 11, color: "var(--text-muted)", pointerEvents: "none", zIndex: 10, whiteSpace: "nowrap" }}>
+              Докосни район за детайли
             </div>
+          )}
+          {/* Legend */}
+          <div style={{ position: "absolute", bottom: 70, left: 12, background: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", padding: "8px 12px", zIndex: 10 }}>
+            <div style={{ fontSize: 8, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, fontFamily: "var(--font-display)" }}>Score</div>
+            {[["#4ade80","75+"],["#86efac","65+"],["#fbbf24","55+"],["#f97316","45+"],["#f87171","<45"]].map(([c,l]) => (
+              <div key={l} style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
+                <div style={{ width: 8, height: 8, borderRadius: 2, background: c, flexShrink: 0 }} />
+                <span style={{ fontSize: 10, color: "var(--text-muted)" }}>{l}</span>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
 
+        {/* Other tabs render on top — map stays alive underneath */}
         {activeTab === "ranking" && <RankingTab weights={weights} profile={profile} onSelectDistrict={handleSelectDistrict} />}
         {activeTab === "layers"  && <LayersTab activeId={activeLayer} onToggle={handleLayerToggle} />}
         {activeTab === "chat"    && <ChatTab />}
       </div>
 
       {/* District bottom sheet */}
-      {selectedDistrict && activeTab === "map" && (
+      {selectedDistrict && (
         <DistrictSheet district={selectedDistrict} weights={weights} onClose={() => setSelected(null)} />
       )}
 

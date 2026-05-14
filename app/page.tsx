@@ -18,7 +18,6 @@ const MobileLayout     = dynamic(() => import("@/components/MobileLayout"),     
 // ── Device detection ──────────────────────────────────────────────────────────
 function useDevice(): "mobile" | "desktop" | null {
   const [device, setDevice] = useState<"mobile" | "desktop" | null>(null);
-
   useEffect(() => {
     const check = () => {
       const ua = navigator.userAgent;
@@ -28,14 +27,12 @@ function useDevice(): "mobile" | "desktop" | null {
         || /Windows Phone/i.test(ua)
         || /BlackBerry|BB10/i.test(ua)
         || /Opera Mini/i.test(ua);
-      const isNarrow = window.innerWidth < 768;
-      setDevice(isPhoneUA && isNarrow ? "mobile" : "desktop");
+      setDevice(isPhoneUA && window.innerWidth < 768 ? "mobile" : "desktop");
     };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
-
   return device;
 }
 
@@ -81,15 +78,22 @@ function DesktopLayout() {
           onSelectDistrict={setSelected}
           districts={DISTRICTS}
         />
+
+        {/* Hint — changes based on state */}
         {!sidebarOpen && (
           <div style={{
             position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)",
             background: "var(--bg-raised)", border: "1px solid var(--border-subtle)",
             borderRadius: "var(--radius-full)", padding: "6px 16px",
-            fontSize: 11, color: "var(--text-muted)", pointerEvents: "none", zIndex: 600, letterSpacing: 0.3,
-          }}>Кликни на район за детайли</div>
+            fontSize: 11, color: "var(--text-muted)", pointerEvents: "none",
+            zIndex: 600, letterSpacing: 0.3, transition: "opacity 0.3s",
+          }}>
+            Кликни на район за квартали и детайли
+          </div>
         )}
+
         <Legend />
+
         {showRanking && (
           <RankingPanel
             districts={DISTRICTS} weights={weights} profileKey={profile}
@@ -114,12 +118,7 @@ function DesktopLayout() {
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function Home() {
   const device = useDevice();
-
-  // Render nothing until device is detected (avoids flash)
-  if (device === null) return (
-    <div style={{ width: "100vw", height: "100vh", background: "#03070f" }} />
-  );
-
+  if (device === null) return <div style={{ width: "100vw", height: "100vh", background: "#03070f" }} />;
   if (device === "mobile") return <MobileLayout />;
   return <DesktopLayout />;
 }
