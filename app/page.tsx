@@ -1,124 +1,126 @@
-"use client";
+// Server Component — SSR, fully indexed by Google
+import type { Metadata } from "next";
+import { DISTRICTS } from "@/lib/data";
+import SofiaHeroWrapper from "@/components/ui/SofiaHeroWrapper";
+import LandingSections from "@/components/ui/LandingSections";
 
-import { useState, useCallback, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { DISTRICTS, PROFILES, Weights, IndicatorKey, District } from "@/lib/data";
+export const metadata: Metadata = {
+  title: "SofiaVital — Къде е най-добре да живея в София?",
+  description:
+    "Открий кой район или квартал в София е най-добър за теб. Интерактивна карта с реални данни за въздух, зеленина, транспорт, училища, детски градини, велосипеди и наводнения от Sofiaplan.",
+};
 
-const HeroScreen       = dynamic(() => import("@/components/HeroScreen"),       { ssr: false });
-const MapView          = dynamic(() => import("@/components/MapView"),           { ssr: false });
-const DistrictPanel    = dynamic(() => import("@/components/DistrictPanel"),     { ssr: false });
-const TopBar           = dynamic(() => import("@/components/TopBar"),            { ssr: false });
-const LayerPanel       = dynamic(() => import("@/components/LayerPanel"),        { ssr: false });
-const RankingPanel     = dynamic(() => import("@/components/RankingPanel"),      { ssr: false });
-const CustomWeightsBar = dynamic(() => import("@/components/CustomWeightsBar"),  { ssr: false });
-const Legend           = dynamic(() => import("@/components/Legend"),            { ssr: false });
-const ChatWidget       = dynamic(() => import("@/components/ChatWidget"),        { ssr: false });
-const MobileLayout     = dynamic(() => import("@/components/MobileLayout"),     { ssr: false });
+const SITE_URL = "https://sofiavital.bg";
 
-// ── Device detection ──────────────────────────────────────────────────────────
-function useDevice(): "mobile" | "desktop" | null {
-  const [device, setDevice] = useState<"mobile" | "desktop" | null>(null);
-  useEffect(() => {
-    const check = () => {
-      const ua = navigator.userAgent;
-      const isPhoneUA =
-        (/Android/i.test(ua) && /Mobile/i.test(ua))
-        || /iPhone|iPod/i.test(ua)
-        || /Windows Phone/i.test(ua)
-        || /BlackBerry|BB10/i.test(ua)
-        || /Opera Mini/i.test(ua);
-      setDevice(isPhoneUA && window.innerWidth < 768 ? "mobile" : "desktop");
-    };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  return device;
-}
+const FAQ_ITEMS = [
+  {
+    q: "Какво е SofiaVital?",
+    a: "SofiaVital е безплатна интерактивна карта, която показва качеството на живот в 24-те официални района на Столична община. Данните идват от Sofiaplan — официалния изследователски орган на общината.",
+  },
+  {
+    q: "Кой район в Sofia има най-чист въздух?",
+    a: "Панчарево (95/100), Банкя (92/100) и Изгрев (82/100) са с най-чист въздух. Кремиковци има най-замърсен (40/100) заради индустриалната зона.",
+  },
+  {
+    q: "Кой квартал е най-добър за семейство с деца?",
+    a: "Витоша, Оборище и Лозенец — добри оценки за детски градини, училища, зеленина и тишина.",
+  },
+  {
+    q: "Кои райони имат риск от наводнения?",
+    a: "Нови Искър (35/100), Искър (38/100) и Кремиковци (42/100) — заради близостта до река Искър.",
+  },
+  {
+    q: "Как се изчислява Vital Score?",
+    a: "Среднопретеглена оценка от 10 показателя. Теглата се определят от профила (Семейство, Млад специалист, Пенсионер) или се настройват ручно с 10 слайдера.",
+  },
+  {
+    q: "Откъде идват данните?",
+    a: "Всички данни са от Sofiaplan API (api.sofiaplan.bg) — официалния отворен API на ОП Sofiaplan, Столична община.",
+  },
+  {
+    q: "Безплатно ли е?",
+    a: "Да, напълно безплатно. AI асистентът е ограничен до 10 въпроса на ден на IP.",
+  },
+  {
+    q: "Работи ли на телефон?",
+    a: "Да. Пълна мобилна версия с bottom navigation, bottom sheet и AI чат.",
+  },
+];
 
-// ── Desktop layout ────────────────────────────────────────────────────────────
-function DesktopLayout() {
-  const [showHero, setShowHero]         = useState(true);
-  const [profile, setProfile]           = useState("family");
-  const [customW, setCustomW]           = useState<Weights>(PROFILES.custom.weights);
-  const [selectedDistrict, setSelected] = useState<District | null>(null);
-  const [activeLayer, setActiveLayer]   = useState<string | null>(null);
-  const [showLayers, setShowLayers]     = useState(false);
-  const [showRanking, setShowRanking]   = useState(false);
+const schemas = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "SofiaVital",
+    url: SITE_URL,
+    description: "Интерактивна карта за качеството на живот в 24-те района на Столична община по 10 показателя.",
+    applicationCategory: "LifestyleApplication",
+    operatingSystem: "Web",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "BGN" },
+    inLanguage: "bg",
+    author: { "@type": "Organization", name: "SofiaVital", url: SITE_URL },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Начало", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Карта", item: `${SITE_URL}/map` },
+    ],
+  },
+];
 
-  const weights = profile === "custom" ? customW : PROFILES[profile].weights;
+const TOP_DISTRICTS = [...DISTRICTS].sort((a, b) => b.score - a.score).slice(0, 5);
 
-  const handleCustomWeight = useCallback((key: IndicatorKey, val: number) => {
-    setCustomW((prev) => ({ ...prev, [key]: val }));
-  }, []);
-
-  const handleLayerToggle = useCallback((id: string) => {
-    setActiveLayer((prev) => (prev === id ? null : id));
-  }, []);
-
-  if (showHero) return <HeroScreen onEnter={() => setShowHero(false)} />;
-
-  const sidebarOpen = selectedDistrict !== null;
-
+export default function HomePage() {
   return (
-    <div style={{ width: "100vw", height: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-base)", overflow: "hidden" }}>
-      <TopBar
-        profile={profile}
-        onProfileChange={setProfile}
-        showLayers={showLayers}
-        onToggleLayers={() => setShowLayers((v) => !v)}
-        showRanking={showRanking}
-        onToggleRanking={() => setShowRanking((v) => !v)}
-      />
-      <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-        <MapView
-          weights={weights}
-          activeLayerId={activeLayer}
-          selectedId={selectedDistrict?.id ?? null}
-          onSelectDistrict={setSelected}
-          districts={DISTRICTS}
-        />
+    <>
+      {schemas.map((s, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }} />
+      ))}
 
-        {/* Hint — changes based on state */}
-        {!sidebarOpen && (
-          <div style={{
-            position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)",
-            background: "var(--bg-raised)", border: "1px solid var(--border-subtle)",
-            borderRadius: "var(--radius-full)", padding: "6px 16px",
-            fontSize: 11, color: "var(--text-muted)", pointerEvents: "none",
-            zIndex: 600, letterSpacing: 0.3, transition: "opacity 0.3s",
-          }}>
-            Кликни на район за квартали и детайли
-          </div>
-        )}
+      <div style={{ background: "#000", color: "#e8f0fe", minHeight: "100vh", overflowX: "hidden" }}>
+        {/* ── Hero (client, canvas + GSAP) ───────────────────────────────── */}
+        <SofiaHeroWrapper />
 
-        <Legend />
+        {/* ── All interactive sections (client) ──────────────────────────── */}
+        <LandingSections faqItems={FAQ_ITEMS} topDistricts={TOP_DISTRICTS} />
 
-        {showRanking && (
-          <RankingPanel
-            districts={DISTRICTS} weights={weights} profileKey={profile}
-            selectedId={selectedDistrict?.id ?? null} onSelect={setSelected}
-          />
-        )}
-        {showLayers && (
-          <LayerPanel activeId={activeLayer} onToggle={handleLayerToggle} rightOffset={sidebarOpen ? 300 : 0} />
-        )}
-        {profile === "custom" && (
-          <CustomWeightsBar weights={customW} onChange={handleCustomWeight} />
-        )}
-        {selectedDistrict && (
-          <DistrictPanel district={selectedDistrict} weights={weights} onClose={() => setSelected(null)} />
-        )}
+        {/* ── SSO SEO content — indexed by Google ────────────────────────── */}
+        <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: 0, width: 1, overflow: "hidden" }}>
+          <h1>SofiaVital — Интерактивна карта за качеството на живот в Sofia</h1>
+          <h2>Кой район в Sofia е най-добър за теб?</h2>
+          <section>
+            <h2>Всички 24 района на Sofia</h2>
+            <ul>
+              {DISTRICTS.map((d) => (
+                <li key={d.id}>
+                  <h3>Район {d.name} — Vital Score {d.score}/100</h3>
+                  <p>Население: {d.pop.toLocaleString("bg-BG")} жители. Въздух: {d.air}/100. Зеленина: {d.green}/100. Транспорт: {d.transit}/100. Училища: {d.schools}/100. Тишина: {d.noise}/100. Детски градини: {d.kindergartens}/100. Велосипеди: {d.cycling}/100. Наводнения: {d.flood}/100.</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section>
+            <h2>Често задавани въпроси</h2>
+            <dl>
+              {FAQ_ITEMS.map(({ q, a }) => (
+                <div key={q}><dt><strong>{q}</strong></dt><dd>{a}</dd></div>
+              ))}
+            </dl>
+          </section>
+        </div>
+
       </div>
-      <ChatWidget />
-    </div>
+    </>
   );
-}
-
-// ── Root ──────────────────────────────────────────────────────────────────────
-export default function Home() {
-  const device = useDevice();
-  if (device === null) return <div style={{ width: "100vw", height: "100vh", background: "#03070f" }} />;
-  if (device === "mobile") return <MobileLayout />;
-  return <DesktopLayout />;
 }

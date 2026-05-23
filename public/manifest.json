@@ -1,0 +1,17 @@
+{
+  "name": "SofiaVital",
+  "short_name": "SofiaVital",
+  "description": "Интерактивна карта за качеството на живот в 24-те района на Sofia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03070f",
+  "theme_color": "#34d399",
+  "lang": "bg",
+  "icons": [
+    { "src": "/favicon-16x16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "categories": ["lifestyle", "navigation", "utilities"],
+  "keywords": ["sofia", "map", "quality of life", "bulgaria"]
+}

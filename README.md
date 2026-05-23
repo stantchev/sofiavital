@@ -1,8 +1,15 @@
 <div align="center">
 
-<br />
+<br/>
 
-# Sofia Vital
+```
+ ███████╗ ██████╗ ███████╗██╗ █████╗     ██╗   ██╗██╗████████╗ █████╗ ██╗
+ ██╔════╝██╔═══██╗██╔════╝██║██╔══██╗    ██║   ██║██║╚══██╔══╝██╔══██╗██║
+ ███████╗██║   ██║█████╗  ██║███████║    ██║   ██║██║   ██║   ███████║██║
+ ╚════██║██║   ██║██╔══╝  ██║██╔══██║    ╚██╗ ██╔╝██║   ██║   ██╔══██║██║
+ ███████║╚██████╔╝██║     ██║██║  ██║     ╚████╔╝ ██║   ██║   ██║  ██║███████╗
+ ╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝     ╚═══╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
+```
 
 **Интерактивна карта за качеството на живот в 24-те района на Столична община**
 
@@ -13,152 +20,176 @@
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 [![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com/)
 
-<br />
+<br/>
 
-> *Кой квартал в София е най-добър за мен?*
+> *Кой квартал в Sofia е най-добър за мен?*
 > SofiaVital отговаря с данни, не с мнения.
 
-<br />
+<br/>
 
 </div>
 
 ---
 
-## Какво е SofiaVital?
+## Маршрути
 
-SofiaVital превръща данните на [Софияплан](https://sofiaplan.bg) - официалния изследователски орган на Столична община - в персонализирана карта на качеството на живот. Изберете профил (семейство, млад специалист, пенсионер), картата се оцветява моментално. Кликнете на район за детайлен анализ по 10 показателя. Питайте AI асистента на естествен език.
-
-**Работи и на телефон.** Пълна мобилна версия с bottom navigation, drag-to-dismiss sheets и AI чат.
+| Route | Тип | Описание |
+|---|---|---|
+| `/` | `○ Static SSR` | Landing page — маркетинг, SEO, FAQ, Schema.org |
+| `/map` | `○ Static SSR` | Интерактивна карта (client-side Leaflet) |
+| `/blog` | `○ Static SSR` | Блог листинг с всички публикации |
+| `/blog/[slug]` | `● SSG` | Индивидуален блог пост (MDX) |
+| `/api/sofiaplan/[...path]` | `ƒ Dynamic` | CORS proxy към api.sofiaplan.bg |
+| `/api/chat` | `ƒ Dynamic` | Gemini Flash AI + rate limiting |
+| `/sitemap.xml` | `○ Auto` | Автоматично генериран с всички routes |
 
 ---
 
-## Скрийншоти
+## Какво е SofiaVital?
 
-| Desktop - карта | Desktop - район | Мобилна версия |
-|:---:|:---:|:---:|
-| ![Desktop map](docs/screenshot-map.png) | ![District panel](docs/screenshot-district.png) | ![Mobile](docs/screenshot-mobile.png) |
+SofiaVital превръща данните на [Sofiaplan](https://sofiaplan.bg) в персонализирана карта на качеството на живот. Изберете профил — картата се оцветява. Кликнете на район — получавате кварталнo ниво с реален spatial score и вградена класация. Питайте AI асистента на естествен български.
 
-> Добави скрийншоти в `docs/` след deploy. Препоръчителни размери: 1280x800 за desktop, 390x844 за mobile.
+**Архитектура:** SSR Server Components за SEO + client-side Leaflet за интерактивността. Чисто разделение — `/` и `/blog` са изцяло SSR, `/map` е client-side.
 
 ---
 
 ## Функционалности
 
-### Карта и данни
-- **24 района** с реални GeoJSON полигони от Софияплан API
-- **10 показателя** - въздух, зеленина, транспорт, образование, тишина, прохлада, детски градини, велосипеди, риск от наводнения, застрояване
-- **Цветово оцветяване** в реално време според избрания профил
-- **flyTo анимация** - плавно приближаване при избор на район
-- **10 слоя данни** - метро, трамваи, веломрежа, паркове, въздух, топлинни острови, училища, детски градини, наводнения, застрояване
+### Карта (`/map`)
+
+| | |
+|---|---|
+| **24 района** | Реални GeoJSON граници от Sofiaplan API |
+| **700+ квартала** | Drill-down при клик на район |
+| **Spatial scoring** | Score за всеки квартал от 5 реални datasets |
+| **10 показателя** | Въздух, зеленина, транспорт, образование и още |
+| **flyTo анимация** | Плавно приближаване при избор |
+| **Point-in-polygon** | Ray-casting за точна квартална граница |
+| **10 слоя данни** | Toggle с живо зареждане от API |
+| **AI асистент** | Gemini Flash на български, 10 въпроса/ден |
+| **Кварталска класация** | Вградена в DistrictPanel — таб "Квартали" |
 
 ### Профили и персонализация
-- **3 готови профила** - Семейство, Млад специалист, Пенсионер
-- **Custom режим** - 10 слайдера за индивидуално настройване на тегла
-- **Класация** - 24-те района наредени по персонализиран score
 
-### AI асистент (Gemini Flash)
-- Отговаря на въпроси за районите на естествен български
-- Знае всичките 10 показателя и данните за всички 24 района
-- 10 безплатни въпроса на ден на IP адрес
-- Примери: *"Кой район е най-добър за алергик?"*, *"Сравни Лозенец и Младост за млад специалист"*
+| Профил | Приоритет |
+|---|---|
+| 👨‍👩‍👧 Семейство | Детски градини 20% · Зеленина 18% · Училища 18% |
+| 💼 Млад специалист | Транспорт 25% · Велосипеди 15% · Въздух 15% |
+| 🌿 Пенсионер | Тишина 25% · Въздух 22% · Зеленина 18% |
+| ⚙️ По избор | 10 слайдера за пълен контрол |
+
+### SEO архитектура
+
+```
+GET /          → Server Component (SSR)
+               → Schema.org: WebApplication + Dataset + FAQPage + BreadcrumbList
+               → Open Graph + Twitter Cards
+               → FAQ секция с 8 въпроса (индексирани)
+               → Всички 24 района с данни (aria-hidden, за ботове)
+
+GET /blog      → Server Component (SSR)
+               → Schema.org: Blog + BlogPosting за всеки пост
+               → Client card components (BlogPostCard) за hover ефекти
+
+GET /blog/[slug] → SSG (generateStaticParams)
+               → Schema.org: BlogPosting с datePublished, author, keywords
+               → MDX рендиране с custom стилизирани компоненти
+               → Canonical URL + Open Graph per-post
+```
+
+### Блог (`/blog`, `/blog/[slug]`)
+
+- MDX файлове в `content/blog/*.md`
+- Frontmatter: `title`, `description`, `date`, `tags`, `readingTime`
+- SSG — всеки пост е pre-rendered при build
+- Custom MDX компоненти: `h1-h3`, `p`, `a`, `ul/ol/li`, `blockquote`, `code`, `pre`, `table`
+- Schema.org `BlogPosting` за всеки пост
+- Напълно responsive — mobile-first дизайн
 
 ### Мобилна версия
-- Пълен мобилен UI - не просто responsive, а изцяло преработен за телефон
-- Bottom navigation с 4 таба - Карта, Класация, Слоеве, AI
-- District bottom sheet с drag-to-dismiss
-- Мобилен hero screen
-- Поддръжка на safe-area-inset за iPhone notch
+
+- Bottom navigation с 4 таба и indicator line
+- MapView **винаги mounted** — слоевете не изчезват при смяна на таб
+- District bottom sheet: drag-to-dismiss, expand/collapse, 2 таба
+- Hero screen с анимирани тагове и stats
+- `safe-area-inset-bottom` за iPhone notch
 
 ---
 
-## Данни
+## Данни и Spatial Scoring
 
-Всички данни са от **[api.sofiaplan.bg](https://api.sofiaplan.bg)** - отвореният API на Софияплан. Заявките минават през Next.js proxy route (`/api/sofiaplan/[...path]`) за избягване на CORS.
+```
+lib/spatialScore.ts — scoring engine за кварталнo ниво
 
-| Показател | Dataset | Описание |
+score(kvartal) = weighted_average(
+  green_score   ← park_area / kvartal_area (+ proximity decay 600m)
+  transit_score ← distance_to_metro×0.6 + distance_to_tram×0.4
+  air_score     ← avg(PM10 grid cells inside kvartal) [inverse]
+  school_score  ← count(schools within 800m)
+  build_score   ← density(permits/km²) [inverse]
+)
+```
+
+**Datasets от Sofiaplan:**
+
+| Dataset | ID | Използва се за |
 |---|---|---|
-| Граници на районите | `350` | GeoJSON полигони - основа на картата |
-| Паркове и градини | `235` | Зелени площи |
-| Метро линии 1 и 2 | `32` | Релсова мрежа |
-| Трамвайна мрежа | `254` | Градски транспорт |
-| Велосипедна мрежа | `606` | Изградена веломрежа 2021 |
-| Въздух - ФПЧ10 | `579` | Концентрация на прах 2018 |
-| Топлинни острови | `45` | ГТО интензивност авг. 2019 |
-| Риск от наводнения | `446` | Зони с висока вероятност за заливане |
-| Училища | `281` | Имоти на образователни обекти |
-| Детски градини | `52` | Детски градини и ясли |
-| Застрояване | `628` | Разрешения за строеж след 2010 |
+| Граници на районите | `350` | Основа на картата |
+| Квартали | `297` | Drill-down ниво |
+| Паркове | `235` | Зеленина score |
+| Метро | `32` | Транспорт score |
+| Трамваи | `254` | Транспорт score |
+| Велосипеди | `606` | Показател + слой |
+| Въздух PM10 | `579` | Въздух score (spatial avg) |
+| Топлинни острови | `45` | Прохлада показател |
+| Наводнения | `446` | Flood показател |
+| Училища | `281` | Образование score |
+| Детски градини | `52` | Показател |
+| Застрояване | `628` | Застрояване score |
 
----
-
-## Vital Score
-
-Агрегиран показател от 0 до 100, изчислен динамично според профила:
-
-```
-Vital Score = sum( стойност_на_показател * тегло_на_профила )
-```
-
-| Оценка | Ниво |
-|---|---|
-| 75 - 100 | Отлично |
-| 65 - 74 | Добро |
-| 55 - 64 | Средно |
-| 45 - 54 | Под средното |
-| 0 - 44 | Слабо |
-
-**Тегла по профил:**
-
-| Показател | Семейство | Млад специалист | Пенсионер |
-|---|---|---|---|
-| Детски градини | 20% | 1% | 1% |
-| Зеленина | 18% | 12% | 18% |
-| Училища | 18% | 2% | 2% |
-| Тишина | 15% | 12% | 25% |
-| Въздух | 12% | 15% | 22% |
-| Транспорт | 5% | 25% | 5% |
-| Велосипеди | 3% | 15% | 3% |
-| Прохлада | 4% | 8% | 15% |
-| Без наводнения | 2% | 3% | 8% |
-| Застрояване | 3% | 7% | 1% |
+Datasets се **кешират client-side** след първото зареждане. Смяна на профил рескорва без нов fetch.
 
 ---
 
 ## Технологии
 
-| | |
-|---|---|
-| **Next.js 15** | App Router, server components, API routes |
-| **TypeScript 5** | Strict mode навсякъде |
-| **Leaflet 1.9** | Интерактивна карта, flyTo анимации, GeoJSON слоеве |
-| **CartoDB Dark** | Тъмна базова карта без API ключ |
-| **Anime.js 3** | Hero stagger анимации, animated counters |
-| **Gemini Flash** | AI асистент с 10 безплатни въпроса/ден |
-| **Sofiaplan API** | 100+ набора реални данни за София |
+```
+Next.js 15 App Router ─── SSR + SSG + API routes + sitemap
+TypeScript 5          ─── Strict mode навсякъде
+Leaflet 1.9           ─── Карта, flyTo, GeoJSON, ray-casting PIP
+GSAP 3 + ScrollTrigger ── Hero canvas анимации
+Anime.js 3            ─── Score counter анимации
+react-icons/tb        ─── Иконки навсякъде
+Gemini Flash          ─── AI асистент (10 въпроса/ден безплатно)
+next-mdx-remote       ─── MDX рендиране за блог постове
+gray-matter           ─── Frontmatter parsing
+CartoDB Dark          ─── Тъмна базова карта без API ключ
+Greengoth font        ─── Заглавия, лога
+```
 
 ---
 
 ## Инсталация
 
 ```bash
-# 1. Клонирай
+# 1. Clone
 git clone https://github.com/YOUR_USERNAME/sofiavital.git
 cd sofiavital
 
-# 2. Инсталирай
+# 2. Install
 npm install
 
-# 3. Конфигурирай (опционално - само за AI асистента)
+# 3. Configure (optional — AI chat only)
 cp .env.example .env.local
-# Попълни GEMINI_API_KEY от https://aistudio.google.com
+# Add: GEMINI_API_KEY=your_key_from_aistudio.google.com
 
-# 4. Стартирай
+# 4. Run
 npm run dev
 ```
 
-Отвори [http://localhost:3000](http://localhost:3000).
+Отвори [http://localhost:3000](http://localhost:3000)
 
-> Картата работи без `.env` файл. Само AI чатът изисква Gemini API ключ.
+> **Без `.env`** — картата и блогът работят изцяло без API ключ. Само AI чатът изисква Gemini key.
 
 ---
 
@@ -168,84 +199,144 @@ npm run dev
 npx vercel
 ```
 
-За AI асистента добави environment variable в Vercel dashboard:
-
+**Environment Variables:**
 ```
-Settings -> Environment Variables -> Add New
-Key:   GEMINI_API_KEY
-Value: [твоя ключ от aistudio.google.com]
+GEMINI_API_KEY = [от aistudio.google.com — безплатно]
 ```
 
-След промяна на env variables е нужен нов deploy (Deployments -> Redeploy).
+**Стъпки след deploy:**
+1. Добави `GEMINI_API_KEY` → Vercel Dashboard → Settings → Env Vars → **Redeploy**
+2. Google Search Console → Add property → верифицирай
+3. Замени `YOUR_GOOGLE_VERIFICATION_CODE` в `app/layout.tsx`
+4. Добави `og-image.png` (1200×630) в `public/`
+5. Submit sitemap: `https://sofiavital.bg/sitemap.xml`
 
 ---
 
-## Структура на проекта
+## Структура
 
 ```
 sofiavital/
+│
 ├── app/
-│   ├── page.tsx                           # Root - device detection, desktop/mobile router
-│   ├── layout.tsx                         # HTML layout + metadata
-│   ├── globals.css                        # Design tokens, анимации, Leaflet overrides
-│   ├── api/
-│   │   ├── sofiaplan/[...path]/route.ts   # Proxy към api.sofiaplan.bg (решава CORS)
-│   │   └── chat/route.ts                  # Gemini Flash AI endpoint + rate limiting
+│   ├── page.tsx                         # / — SSR landing page
+│   ├── layout.tsx                       # Root layout, metadata, OG
+│   ├── globals.css                      # Design tokens, Greengoth font
+│   ├── sitemap.ts                       # Auto sitemap (/, /map, /blog, posts)
+│   ├── map/page.tsx                     # /map — зарежда AppClientWrapper
+│   ├── blog/
+│   │   ├── page.tsx                     # /blog — SSR listing
+│   │   └── [slug]/page.tsx              # /blog/[slug] — SSG MDX post
+│   └── api/
+│       ├── sofiaplan/[...path]/route.ts # CORS proxy + 1h cache
+│       └── chat/route.ts               # Gemini Flash + rate limiting
+│
+├── content/
+│   └── blog/
+│       ├── top-raioni-sofia-2024.md
+│       ├── kvartali-sofia-spatialen-analiz.md
+│       └── vazduh-sofia-rajoni.md
 │
 ├── components/
-│   ├── MobileLayout.tsx      # Цялото мобилно приложение (hero, tabs, sheets)
-│   ├── HeroScreen.tsx        # Desktop hero с Anime.js stagger анимация
-│   ├── MapView.tsx           # Leaflet карта + GeoJSON + flyTo
-│   ├── DistrictPanel.tsx     # Desktop sidebar с animated score bars
-│   ├── TopBar.tsx            # Desktop навигация + profile switcher
-│   ├── LayerPanel.tsx        # Desktop слоеве панел
-│   ├── RankingPanel.tsx      # Desktop класация
-│   ├── CustomWeightsBar.tsx  # Desktop слайдери за тегла
-│   ├── ChatWidget.tsx        # Desktop floating AI chat
-│   └── Legend.tsx            # Цветова легенда
+│   ├── AppClient.tsx            # Интерактивно приложение ("use client")
+│   ├── AppClientWrapper.tsx     # Dynamic import wrapper
+│   ├── MobileLayout.tsx         # Мобилно приложение
+│   ├── MapView.tsx              # Leaflet + drill-down + spatial
+│   ├── DistrictPanel.tsx        # Sidebar с показатели + кварталска класация
+│   ├── TopBar.tsx               # Навигация с профил dropdown
+│   ├── RankingPanel.tsx         # Класация с mini bars
+│   ├── LayerPanel.tsx           # Слоеве панел
+│   ├── CustomWeightsBar.tsx     # Слайдери за тегла
+│   ├── ChatWidget.tsx           # Floating AI chat (desktop)
+│   ├── Legend.tsx               # Цветова легенда
+│   └── ui/
+│       ├── SofiaHero.tsx        # Canvas hero с GSAP + ASCII орб
+│       ├── SofiaHeroWrapper.tsx # Dynamic import wrapper за hero
+│       ├── LandingSections.tsx  # Карусели, FAQ, features, footer
+│       └── BlogPostCard.tsx     # Client card с hover ефекти
 │
 ├── lib/
-│   └── data.ts               # Типове, данни за 24 района, профили, helpers
+│   ├── data.ts                  # 24 района, профили, типове, helpers
+│   ├── spatialScore.ts          # Spatial scoring engine
+│   ├── blog.ts                  # MDX reader, frontmatter parser
+│   └── dateUtils.ts             # Client-safe date formatting
+│
+├── public/
+│   ├── Greengoth_Expanded.ttf   # Custom шрифт
+│   ├── robots.txt               # Allow: /
+│   ├── manifest.json            # PWA manifest
+│   └── og-image.png             # [добави сам, 1200×630]
 │
 └── types/
-    └── animejs.d.ts          # Ръчни TypeScript типове за animejs
+    └── animejs.d.ts             # TypeScript типове за animejs
 ```
+
+---
+
+## Добавяне на блог пост
+
+Създай файл в `content/blog/my-post.md`:
+
+```markdown
+---
+title: "Заглавие на публикацията"
+description: "Кратко описание за SEO и preview."
+date: "2025-03-01"
+author: "SofiaVital"
+tags: ["sofia", "данни", "райони"]
+readingTime: 4
+---
+
+Съдържание тук...
+
+## Заглавие 2
+
+Параграф с **bold** и *italic* текст.
+```
+
+Постът автоматично се появява в `/blog` и получава своя URL `/blog/my-post`.
 
 ---
 
 ## Roadmap
 
-- [ ] Реален шум - интеграция на шумови карти от Софияплан dataset #...
-- [ ] Имотни цени - dataset #624 (наеми по ГЕ) за price/quality анализ
-- [ ] Сравнение - side-by-side на 2-3 района
-- [ ] Квартален drill-down - от район към квартал (dataset #297, 700+ квартала)
-- [ ] Share - персонализиран линк към резултата с профил и тегла
-- [ ] Исторически тренд - промяна на показателите с времето
+- [ ] Класация на квартали в RankingPanel при drill-down
+- [ ] Имотни цени — Sofiaplan dataset `#624`
+- [ ] Share — персонализиран линк с профил и тегла
+- [ ] Сравнение side-by-side на 2-3 района
+- [ ] Исторически тренд на показателите
+- [ ] i18n — English version
+- [ ] Dark/light mode toggle
 
 ---
 
 ## Принос
 
-Pull requests са добре дошли. За по-големи промени отвори issue първо.
+Pull requests са добре дошли.
 
 ```bash
-git checkout -b feature/my-idea
-git commit -m "feat: describe your change"
-git push origin feature/my-idea
+git checkout -b feature/my-feature
+git commit -m "feat: describe change"
+git push origin feature/my-feature
+# → Open Pull Request
 ```
 
 ---
 
 ## Лиценз
 
-[MIT](LICENSE)
+[MIT](LICENSE) © 2025 SofiaVital
 
 ---
 
 <div align="center">
 
-Данни: [Софияплан](https://sofiaplan.bg) &nbsp;·&nbsp; Карти: [OpenStreetMap](https://openstreetmap.org) / [CARTO](https://carto.com) &nbsp;·&nbsp; AI: [Google Gemini](https://aistudio.google.com)
+Данни: [Sofiaplan](https://sofiaplan.bg) &nbsp;·&nbsp;
+Карти: [OpenStreetMap](https://openstreetmap.org) / [CARTO](https://carto.com) &nbsp;·&nbsp;
+AI: [Google Gemini](https://aistudio.google.com)
 
-**Направен с love за София**
+<br/>
+
+**Направен с ♥ за Sofia**
 
 </div>

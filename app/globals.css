@@ -1,4 +1,13 @@
+/* @import MUST be first */
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+@font-face {
+  font-family: 'Greengoth';
+  src: url('/Greengoth_Expanded.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ─── TOKENS ─────────────────────────────────────────────────── */
 :root {
@@ -34,13 +43,14 @@
 
   /* Fonts */
   --font-display: 'Syne', sans-serif;
+  --font-gothic:  'Greengoth', 'Syne', sans-serif;
   --font-body:    'DM Sans', sans-serif;
 
   /* Spacing */
-  --radius-sm:  6px;
-  --radius-md:  10px;
-  --radius-lg:  16px;
-  --radius-xl:  24px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
   --radius-full: 999px;
 }
 
@@ -49,7 +59,6 @@
 
 html, body {
   height: 100%;
-  overflow: hidden;
   background: var(--bg-base);
   color: var(--text-primary);
   font-family: var(--font-body);
@@ -119,8 +128,8 @@ html, body {
 }
 
 /* ─── UTILITY ────────────────────────────────────────────────── */
-.fade-up   { animation: fadeUp 0.4s ease both; }
-.fade-in   { animation: fadeIn 0.3s ease both; }
+.fade-up        { animation: fadeUp 0.4s ease both; }
+.fade-in        { animation: fadeIn 0.3s ease both; }
 .slide-in-right { animation: slideInRight 0.35s cubic-bezier(0.16,1,0.3,1) both; }
 
 .animate-delay-1 { animation-delay: 0.05s; }
@@ -137,4 +146,11 @@ html, body {
   pointer-events: none;
   opacity: 0.4;
   border-radius: inherit;
+}
+
+/* ─── MAP PAGE ───────────────────────────────────────────────── */
+/* Applied only on /map to lock scroll (Leaflet needs it) */
+.map-body {
+  overflow: hidden !important;
+  height: 100vh !important;
 }
